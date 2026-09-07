@@ -1,0 +1,45 @@
+# Read-only, cluster-wide. Zero write verbs anywhere: no create/update/patch/delete,
+# no pods/exec, no pods/portforward, no secrets. Justifications: docs/RBAC.md.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+automountServiceAccountToken: true
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Name }}-collector
+rules:
+  # Core forensic data. Events are the whole point: Kubernetes expires them in 1h.
+  - apiGroups: [""]
+    resources: ["events", "pods", "nodes", "namespaces"]
+    verbs: ["get", "list", "watch"]
+  # events.k8s.io mirrors core events on newer clusters.
+  - apiGroups: ["events.k8s.io"]
+    resources: ["events"]
+    verbs: ["get", "list", "watch"]
+  # CNI detection hints (tier 2): which network DaemonSets exist. The collector
+  # reads this so the agent needs no API access at all.
+  - apiGroups: ["apps"]
+    resources: ["daemonsets"]
+    verbs: ["get", "list", "watch"]
+{{- if .Values.rbac.calicoIPPools }}
+  - apiGroups: ["crd.projectcalico.org"]
+    resources: ["ippools"]
+    verbs: ["get", "list"]
+{{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Release.Name }}-collector
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ .Release.Name }}-collector
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Release.Name }}
+    namespace: {{ .Release.Namespace }}

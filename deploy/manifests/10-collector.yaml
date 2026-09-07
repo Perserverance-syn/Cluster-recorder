@@ -1,0 +1,168 @@
+---
+# Source: cluster-recorder/templates/rbac.yaml
+# Read-only, cluster-wide. Zero write verbs anywhere: no create/update/patch/delete,
+# no pods/exec, no pods/portforward, no secrets. Justifications: docs/RBAC.md.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: recorder
+  namespace: recorder
+automountServiceAccountToken: true
+
+---
+# Source: cluster-recorder/templates/collector.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: recorder-data
+  namespace: recorder
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+# Source: cluster-recorder/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: recorder-collector
+rules:
+  # Core forensic data. Events are the whole point: Kubernetes expires them in 1h.
+  - apiGroups: [""]
+    resources: ["events", "pods", "nodes", "namespaces"]
+    verbs: ["get", "list", "watch"]
+  # events.k8s.io mirrors core events on newer clusters.
+  - apiGroups: ["events.k8s.io"]
+    resources: ["events"]
+    verbs: ["get", "list", "watch"]
+  # CNI detection hints (tier 2): which network DaemonSets exist. The collector
+  # reads this so the agent needs no API access at all.
+  - apiGroups: ["apps"]
+    resources: ["daemonsets"]
+    verbs: ["get", "list", "watch"]
+
+---
+# Source: cluster-recorder/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: recorder-collector
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: recorder-collector
+subjects:
+  - kind: ServiceAccount
+    name: recorder
+    namespace: recorder
+---
+# Source: cluster-recorder/templates/collector.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: recorder
+  namespace: recorder
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: cluster-recorder
+    app.kubernetes.io/instance: recorder
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+
+---
+# Source: cluster-recorder/templates/collector.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recorder
+  namespace: recorder
+  labels:
+    app.kubernetes.io/name: cluster-recorder
+    app.kubernetes.io/instance: recorder
+    app.kubernetes.io/version: "0.1.0"
+spec:
+  replicas: 1                # single writer on a ReadWriteOnce volume
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cluster-recorder
+      app.kubernetes.io/instance: recorder
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cluster-recorder
+        app.kubernetes.io/instance: recorder
+    spec:
+      serviceAccountName: recorder
+      # Runs under Pod Security Admission `restricted`.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+        - name: collector
+          image: "ghcr.io/perserverance-syn/cluster-recorder:0.1.0"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          env:
+            - name: LISTEN_ADDR
+              value: ":8080"
+            - name: STORAGE_BACKEND
+              value: "sqlite"
+            - name: STORAGE_DSN
+              value: "/data/recorder.db"
+            - name: STORAGE_MAX_MB
+              value: "4096"
+            - name: RETENTION_EVENTS
+              value: "720h"
+            - name: RETENTION_CHANGES
+              value: "720h"
+            - name: RETENTION_SNAPSHOTS
+              value: "168h"
+            - name: INCIDENT_POD_THRESHOLD
+              value: "3"
+            - name: INCIDENT_NS_THRESHOLD
+              value: "2"
+            - name: INCIDENT_WINDOW_MIN
+              value: "10"
+            - name: BASELINE_STABLE_MIN
+              value: "15"
+            - name: LOG_LEVEL
+              value: "info"
+          ports:
+            - name: http
+              containerPort: 8080
+          livenessProbe:
+            httpGet: {path: /api/v1/healthz, port: http}
+            periodSeconds: 10
+          readinessProbe:
+            httpGet: {path: /api/v1/readyz, port: http}
+            periodSeconds: 5
+          resources:
+            limits:
+              memory: 512Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: recorder-data

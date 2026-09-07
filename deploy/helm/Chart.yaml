@@ -1,0 +1,7 @@
+apiVersion: v2
+name: cluster-recorder
+description: Records Kubernetes and node-level state past the API server's TTLs so outages can be reconstructed after the fact.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+kubeVersion: ">=1.27.0-0"

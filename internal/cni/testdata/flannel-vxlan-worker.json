@@ -1,0 +1,777 @@
+{
+  "host": {
+    "boot_time": {
+      "state": "present",
+      "value": 1788726205
+    },
+    "container_runtime.active": {
+      "state": "present",
+      "value": true
+    },
+    "container_runtime.started_at": {
+      "state": "present",
+      "value": 1788726235
+    },
+    "disk_pressure": {
+      "state": "present",
+      "value": false
+    },
+    "inode_usage": {
+      "state": "present",
+      "value": 8
+    },
+    "kubelet.active": {
+      "state": "present",
+      "value": true
+    },
+    "kubelet.started_at": {
+      "state": "present",
+      "value": 1788726247
+    },
+    "memory_pressure": {
+      "state": "present",
+      "value": false
+    }
+  },
+  "view": {
+    "links": [
+      {
+        "name": "lo",
+        "index": 1,
+        "type": "device",
+        "up": true,
+        "carrier": true,
+        "mtu": 65536
+      },
+      {
+        "name": "ens33",
+        "index": 2,
+        "type": "device",
+        "up": true,
+        "carrier": true,
+        "mtu": 1500
+      },
+      {
+        "name": "flannel.1",
+        "index": 3,
+        "type": "vxlan",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "vxlan": {
+          "vni": 1,
+          "local": "192.0.2.12",
+          "port": 8472
+        }
+      },
+      {
+        "name": "cni0",
+        "index": 4,
+        "type": "bridge",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450
+      },
+      {
+        "name": "veth21882807",
+        "index": 5,
+        "type": "veth",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "master": "cni0"
+      },
+      {
+        "name": "veth85d0f639",
+        "index": 6,
+        "type": "veth",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "master": "cni0"
+      },
+      {
+        "name": "vethe4e9041c",
+        "index": 7,
+        "type": "veth",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "master": "cni0"
+      },
+      {
+        "name": "veth2fe4de04",
+        "index": 8,
+        "type": "veth",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "master": "cni0"
+      },
+      {
+        "name": "vethf2e13fb2",
+        "index": 9,
+        "type": "veth",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "master": "cni0"
+      },
+      {
+        "name": "veth7c0cc44a",
+        "index": 10,
+        "type": "veth",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "master": "cni0"
+      },
+      {
+        "name": "veth0dad3b50",
+        "index": 11,
+        "type": "veth",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "master": "cni0"
+      },
+      {
+        "name": "veth8350ad1f",
+        "index": 12,
+        "type": "veth",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "master": "cni0"
+      },
+      {
+        "name": "vethb435680a",
+        "index": 13,
+        "type": "veth",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "master": "cni0"
+      },
+      {
+        "name": "veth7a7b9e9e",
+        "index": 14,
+        "type": "veth",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "master": "cni0"
+      },
+      {
+        "name": "vethfa6f7f38",
+        "index": 15,
+        "type": "veth",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "master": "cni0"
+      },
+      {
+        "name": "veth352f421b",
+        "index": 16,
+        "type": "veth",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "master": "cni0"
+      },
+      {
+        "name": "veth73d60d40",
+        "index": 17,
+        "type": "veth",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "master": "cni0"
+      },
+      {
+        "name": "vethf8893212",
+        "index": 18,
+        "type": "veth",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "master": "cni0"
+      },
+      {
+        "name": "veth9c9ee7e2",
+        "index": 19,
+        "type": "veth",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "master": "cni0"
+      },
+      {
+        "name": "vethcb4ebcc1",
+        "index": 20,
+        "type": "veth",
+        "up": true,
+        "carrier": true,
+        "mtu": 1450,
+        "master": "cni0"
+      }
+    ],
+    "addrs": [
+      {
+        "link": "lo",
+        "ip": "127.0.0.1",
+        "prefix": 8,
+        "family": 4
+      },
+      {
+        "link": "ens33",
+        "ip": "192.0.2.12",
+        "prefix": 24,
+        "family": 4
+      },
+      {
+        "link": "flannel.1",
+        "ip": "10.244.2.0",
+        "prefix": 32,
+        "family": 4
+      },
+      {
+        "link": "cni0",
+        "ip": "10.244.2.1",
+        "prefix": 24,
+        "family": 4
+      },
+      {
+        "link": "lo",
+        "ip": "::1",
+        "prefix": 128,
+        "family": 6
+      },
+      {
+        "link": "ens33",
+        "ip": "fe80::20c:29ff:fe20:90ee",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "flannel.1",
+        "ip": "fe80::c8d8:14ff:fe6d:9892",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "cni0",
+        "ip": "fe80::386c:5eff:fedb:a34c",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "veth21882807",
+        "ip": "fe80::209a:27ff:fe30:2b3a",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "veth85d0f639",
+        "ip": "fe80::2005:96ff:fea7:cb28",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "vethe4e9041c",
+        "ip": "fe80::2cb4:73ff:fe0b:e4c6",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "veth2fe4de04",
+        "ip": "fe80::1865:1bff:fedc:f471",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "vethf2e13fb2",
+        "ip": "fe80::b08d:23ff:fee4:de4b",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "veth7c0cc44a",
+        "ip": "fe80::9453:a8ff:fe3a:1f3d",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "veth0dad3b50",
+        "ip": "fe80::cdf:7cff:fe98:1e0c",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "veth8350ad1f",
+        "ip": "fe80::74de:cff:fed2:bea",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "vethb435680a",
+        "ip": "fe80::427:ddff:fe05:e200",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "veth7a7b9e9e",
+        "ip": "fe80::4c02:4ff:fe42:fa01",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "vethfa6f7f38",
+        "ip": "fe80::303b:a3ff:fe20:5d7e",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "veth352f421b",
+        "ip": "fe80::f404:acff:fe01:7f8a",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "veth73d60d40",
+        "ip": "fe80::78e6:c8ff:fec7:bd9d",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "vethf8893212",
+        "ip": "fe80::7808:e1ff:fe0a:ab6b",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "veth9c9ee7e2",
+        "ip": "fe80::28b4:fcff:fea6:1d25",
+        "prefix": 64,
+        "family": 6
+      },
+      {
+        "link": "vethcb4ebcc1",
+        "ip": "fe80::8d7:d0ff:fecc:5e1",
+        "prefix": 64,
+        "family": 6
+      }
+    ],
+    "routes": [
+      {
+        "dst": "0.0.0.0/0",
+        "gateway": "192.0.2.2",
+        "dev": "ens33",
+        "family": 4
+      },
+      {
+        "dst": "10.244.0.0/24",
+        "gateway": "10.244.0.0",
+        "dev": "flannel.1",
+        "family": 4
+      },
+      {
+        "dst": "10.244.1.0/24",
+        "gateway": "10.244.1.0",
+        "dev": "flannel.1",
+        "family": 4
+      },
+      {
+        "dst": "10.244.2.0/24",
+        "dev": "cni0",
+        "src": "10.244.2.1",
+        "family": 4
+      },
+      {
+        "dst": "192.0.2.0/24",
+        "dev": "ens33",
+        "src": "192.0.2.12",
+        "family": 4
+      },
+      {
+        "dst": "::1/128",
+        "dev": "lo",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "ens33",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "flannel.1",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "veth21882807",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "cni0",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "veth85d0f639",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "veth2fe4de04",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "vethe4e9041c",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "vethfa6f7f38",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "veth7c0cc44a",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "veth0dad3b50",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "vethf2e13fb2",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "veth73d60d40",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "vethb435680a",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "veth352f421b",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "veth7a7b9e9e",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "vethf8893212",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "veth8350ad1f",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "vethcb4ebcc1",
+        "family": 6
+      },
+      {
+        "dst": "fe80::/64",
+        "dev": "veth9c9ee7e2",
+        "family": 6
+      }
+    ],
+    "neighs": [
+      {
+        "dev": "cni0",
+        "ip": "10.244.2.224",
+        "mac": "4e:fe:96:a2:a1:ac",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "cni0",
+        "ip": "10.244.2.223",
+        "mac": "ba:67:57:fe:07:e3",
+        "state": "DELAY"
+      },
+      {
+        "dev": "flannel.1",
+        "ip": "10.244.0.0",
+        "mac": "92:c7:b0:cf:3c:49",
+        "state": "PERMANENT"
+      },
+      {
+        "dev": "lo",
+        "ip": "0.0.0.0",
+        "mac": "00:00:00:00:00:00",
+        "state": "NOARP"
+      },
+      {
+        "dev": "cni0",
+        "ip": "10.244.2.216",
+        "mac": "f2:11:69:05:14:e0",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "cni0",
+        "ip": "10.244.2.211",
+        "mac": "c2:c2:44:db:b7:53",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "cni0",
+        "ip": "10.244.2.218",
+        "mac": "4a:1f:cc:d5:eb:db",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "ens33",
+        "ip": "192.0.2.2",
+        "mac": "00:50:56:fd:81:ae",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "cni0",
+        "ip": "224.0.0.22",
+        "mac": "01:00:5e:00:00:16",
+        "state": "NOARP"
+      },
+      {
+        "dev": "ens33",
+        "ip": "192.0.2.11",
+        "mac": "00:0c:29:b1:55:4f",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "cni0",
+        "ip": "10.244.2.213",
+        "mac": "8e:15:5e:7b:36:88",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "cni0",
+        "ip": "10.244.2.220",
+        "mac": "36:a7:09:74:34:b1",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "cni0",
+        "ip": "10.244.2.215",
+        "mac": "be:de:b9:12:5b:16",
+        "state": "STALE"
+      },
+      {
+        "dev": "cni0",
+        "ip": "10.244.2.222",
+        "mac": "2e:da:c8:2e:0a:39",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "cni0",
+        "ip": "10.244.2.225",
+        "mac": "d2:dd:5f:c3:93:c8",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "cni0",
+        "ip": "10.244.2.210",
+        "mac": "e6:01:7c:16:0f:41",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "cni0",
+        "ip": "10.244.2.217",
+        "mac": "fe:56:bb:48:2d:84",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "cni0",
+        "ip": "10.244.2.212",
+        "mac": "7a:a0:31:d1:82:12",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "flannel.1",
+        "ip": "10.244.1.0",
+        "mac": "72:89:02:c2:38:47",
+        "state": "PERMANENT"
+      },
+      {
+        "dev": "cni0",
+        "ip": "10.244.2.219",
+        "mac": "9e:e9:7b:92:16:8d",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "ens33",
+        "ip": "192.0.2.1",
+        "mac": "00:50:56:c0:00:08",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "cni0",
+        "ip": "10.244.2.214",
+        "mac": "f6:9d:60:da:8c:f8",
+        "state": "DELAY"
+      },
+      {
+        "dev": "ens33",
+        "ip": "192.0.2.10",
+        "mac": "00:0c:29:7b:eb:87",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "cni0",
+        "ip": "10.244.2.221",
+        "mac": "ba:a8:14:fd:16:34",
+        "state": "REACHABLE"
+      },
+      {
+        "dev": "veth0dad3b50",
+        "ip": "ff02::1:ff98:1e0c",
+        "mac": "33:33:ff:98:1e:0c",
+        "state": "NOARP"
+      },
+      {
+        "dev": "flannel.1",
+        "ip": "ff02::2",
+        "mac": "33:33:00:00:00:02",
+        "state": "NOARP"
+      },
+      {
+        "dev": "vethb435680a",
+        "ip": "ff02::16",
+        "mac": "33:33:00:00:00:16",
+        "state": "NOARP"
+      },
+      {
+        "dev": "veth2fe4de04",
+        "ip": "ff02::1:ffdc:f471",
+        "mac": "33:33:ff:dc:f4:71",
+        "state": "NOARP"
+      },
+      {
+        "dev": "cni0",
+        "ip": "ff02::1:ffdb:a34c",
+        "mac": "33:33:ff:db:a3:4c",
+        "state": "NOARP"
+      },
+      {
+        "dev": "veth8350ad1f",
+        "ip": "ff02::16",
+        "mac": "33:33:00:00:00:16",
+        "state": "NOARP"
+      },
+      {
+        "dev": "veth21882807",
+        "ip": "ff02::1:ff30:2b3a",
+        "mac": "33:33:ff:30:2b:3a",
+        "state": "NOARP"
+      },
+      {
+        "dev": "veth0dad3b50",
+        "ip": "ff02::16",
+        "mac": "33:33:00:00:00:16",
+        "state": "NOARP"
+      },
+      {
+        "dev": "vethe4e9041c",
+        "ip": "ff02::1:ff0b:e4c6",
+        "mac": "33:33:ff:0b:e4:c6",
+        "state": "NOARP"
+      },
+      {
+        "dev": "veth2fe4de04",
+        "ip": "ff02::16",
+        "mac": "33:33:00:00:00:16",
+        "state": "NOARP"
+      },
+      {
+        "dev": "vethf2e13fb2",
+        "ip": "ff02::16",
+        "mac": "33:33:00:00:00:16",
+        "state": "NOARP"
+      },
+      {
+        "dev": "veth7c0cc44a",
+        "ip": "ff02::16",
+        "mac": "33:33:00:00:00:16",
+        "state": "NOARP"
+      },
+      {
+        "dev": "ens33",
+        "ip": "ff02::16",
+        "mac": "33:33:00:00:00:16",
+        "state": "NOARP"
+      },
+      {
+        "dev": "vethe4e9041c",
+        "ip": "ff02::16",
+        "mac": "33:33:00:00:00:16",
+        "state": "NOARP"
+      },
+      {
+        "dev": "veth21882807",
+        "ip": "ff02::16",
+        "mac": "33:33:00:00:00:16",
+        "state": "NOARP"
+      },
+      {
+        "dev": "veth7c0cc44a",
+        "ip": "ff02::1:ff3a:1f3d",
+        "mac": "33:33:ff:3a:1f:3d",
+        "state": "NOARP"
+      },
+      {
+        "dev": "flannel.1",
+        "ip": "ff02::16",
+        "mac": "33:33:00:00:00:16",
+        "state": "NOARP"
+      },
+      {
+        "dev": "vethf2e13fb2",
+        "ip": "ff02::1:ffe4:de4b",
+        "mac": "33:33:ff:e4:de:4b",
+        "state": "NOARP"
+      },
+      {
+        "dev": "cni0",
+        "ip": "ff02::16",
+        "mac": "33:33:00:00:00:16",
+        "state": "NOARP"
+      },
+      {
+        "dev": "veth85d0f639",
+        "ip": "ff02::16",
+        "mac": "33:33:00:00:00:16",
+        "state": "NOARP"
+      },
+      {
+        "dev": "flannel.1",
+        "ip": "ff02::1:ff6d:9892",
+        "mac": "33:33:ff:6d:98:92",
+        "state": "NOARP"
+      },
+      {
+        "dev": "ens33",
+        "ip": "ff02::2",
+        "mac": "33:33:00:00:00:02",
+        "state": "NOARP"
+      }
+    ]
+  }
+}

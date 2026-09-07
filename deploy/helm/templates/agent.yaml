@@ -1,0 +1,89 @@
+{{- if .Values.agent.enabled }}
+# Tier 2. Its own namespace, labelled privileged, so the collector's namespace
+# can stay restricted. The agent has NO Kubernetes API access: no Role, no
+# binding, no token. It reads the node via netlink and POSTs to the collector.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.agent.namespace }}
+  labels:
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/audit: privileged
+    pod-security.kubernetes.io/warn: privileged
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Release.Name }}-agent
+  namespace: {{ .Values.agent.namespace }}
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ .Release.Name }}-agent
+  namespace: {{ .Values.agent.namespace }}
+  labels:
+    app.kubernetes.io/name: cluster-recorder-agent
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cluster-recorder-agent
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cluster-recorder-agent
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ .Release.Name }}-agent
+      automountServiceAccountToken: false
+      hostNetwork: true      # netlink must read the HOST namespace, not the pod's
+      hostPID: true          # /proc/<pid> of kubelet and containerd for restart detection
+      dnsPolicy: ClusterFirstWithHostNet
+      nodeSelector:
+        kubernetes.io/os: linux   # Linux only; Windows nodes are skipped, never crash-looped
+      tolerations:
+        - operator: Exists       # control-plane nodes are affected too, and always skipped
+      priorityClassName: system-node-critical
+      containers:
+        - name: agent
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/agent"]
+          securityContext:
+            runAsUser: 0             # netlink socket + /etc/cni/net.d are root-readable only
+            privileged: false        # NOT privileged: read-only netlink needs no capabilities
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          env:
+            - name: NODE_NAME
+              valueFrom: {fieldRef: {fieldPath: spec.nodeName}}
+            - name: COLLECTOR_URL
+              value: "http://{{ .Release.Name }}.{{ .Release.Namespace }}.svc:8080"
+            - name: SAMPLE_INTERVAL
+              value: {{ .Values.agent.sampleIntervalSeconds | quote }}
+            - name: CNI_DRIVER
+              value: {{ .Values.agent.cniDriver | quote }}
+            - name: AGENT_BUFFER
+              value: {{ .Values.agent.bufferSize | quote }}
+            - name: POD_CIDR
+              value: {{ .Values.podCIDR | quote }}
+          resources:
+            {{- toYaml .Values.agent.resources | nindent 12 }}
+          volumeMounts:
+            - name: cni
+              mountPath: /etc/cni/net.d
+              readOnly: true
+            - name: host
+              mountPath: /host
+              readOnly: true       # statfs for disk and inode pressure; nothing is written
+      volumes:
+        - name: cni
+          hostPath: {path: /etc/cni/net.d, type: DirectoryOrCreate}
+        - name: host
+          hostPath: {path: /, type: Directory}
+{{- end }}

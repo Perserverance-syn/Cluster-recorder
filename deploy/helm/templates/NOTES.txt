@@ -1,0 +1,11 @@
+{{ .Release.Name }} installed in namespace {{ .Release.Namespace }}.
+
+Verify (copy-paste):
+
+  kubectl -n {{ .Release.Namespace }} get pods
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ .Release.Name }} 8080:8080 &
+  curl -s localhost:8080/api/v1/healthz
+  curl -s "localhost:8080/api/v1/events?from=-10m" | head
+  curl -s "localhost:8080/api/v1/nodes/$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')/timeline?from=-1h"
+
+Events accumulate within a minute. The API is unauthenticated and ClusterIP-only: do not expose it. See docs/LIMITS.md.

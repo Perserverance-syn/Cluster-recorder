@@ -1,0 +1,115 @@
+openapi: 3.0.3
+info:
+  title: Cluster Recorder API
+  version: "1"
+  description: >-
+    Read-only forensic API over retained Kubernetes events, pod transitions,
+    node snapshots and change records. Unauthenticated; ClusterIP-only in v1.
+    Time parameters accept RFC3339, Unix seconds, or a negative duration
+    relative to now such as -10m or -6h. Defaults: from=-1h, to=now.
+paths:
+  /api/v1/healthz:
+    get:
+      summary: Liveness
+      responses: {"200": {description: ok}}
+  /api/v1/readyz:
+    get:
+      summary: Readiness (informer caches synced)
+      responses: {"200": {description: ready}, "503": {description: still syncing}}
+  /api/v1/events:
+    get:
+      summary: Retained events, past the API server TTL
+      parameters:
+        - {name: namespace, in: query, schema: {type: string}}
+        - {name: node, in: query, schema: {type: string}}
+        - {name: from, in: query, schema: {type: string}}
+        - {name: to, in: query, schema: {type: string}}
+        - {name: limit, in: query, schema: {type: integer, default: 1000}}
+      responses: {"200": {description: list of Event}}
+  /api/v1/nodes:
+    get:
+      summary: Nodes with recorded snapshots, last snapshot times, detected driver
+      responses: {"200": {description: list of NodeSummary}}
+  /api/v1/nodes/{node}/timeline:
+    get:
+      summary: Merged, time-ordered change records, events and pod transitions for one node. The primary endpoint.
+      parameters:
+        - {name: node, in: path, required: true, schema: {type: string}}
+        - {name: from, in: query, schema: {type: string}}
+        - {name: to, in: query, schema: {type: string}}
+      responses: {"200": {description: list of TimelineEntry}}
+  /api/v1/nodes/{node}/snapshots:
+    get:
+      summary: Raw snapshots for one node, all sources
+      parameters:
+        - {name: node, in: path, required: true, schema: {type: string}}
+        - {name: from, in: query, schema: {type: string}}
+        - {name: to, in: query, schema: {type: string}}
+      responses: {"200": {description: list of Snapshot}}
+  /api/v1/nodes/{node}/diff:
+    get:
+      summary: Latest snapshot versus last healthy baseline, field by field, per source
+      parameters:
+        - {name: node, in: path, required: true, schema: {type: string}}
+        - {name: against, in: query, schema: {type: string, enum: [baseline], default: baseline}}
+      responses:
+        "200": {description: "{node, sources: {api|agent: {baseline_time, current_time, fields[], note}}}"}
+        "404": {description: node has no snapshots}
+  /api/v1/incidents:
+    get:
+      summary: Detected clusters of failure, each with every change record from the preceding 6 hours
+      parameters:
+        - {name: from, in: query, schema: {type: string, default: "-720h"}}
+        - {name: to, in: query, schema: {type: string}}
+        - {name: open, in: query, schema: {type: boolean}, description: only unclosed incidents}
+      responses: {"200": {description: list of Incident}}
+  /api/v1/agent/snapshots:
+    post:
+      summary: Node agent sample ingest (tier 2). Source is forced to agent.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/Snapshot"}
+      responses:
+        "202": {description: "{id, changes}"}
+        "400": {description: invalid snapshot}
+  /api/v1/agent/hints:
+    get:
+      summary: CNI detection hints for a node agent (DaemonSets cluster-wide, the node's pod CIDRs and the cluster CIDR). Agents have no API access; this is how they learn cluster facts.
+      parameters:
+        - {name: node, in: query, required: true, schema: {type: string}}
+      responses: {"200": {description: "{daemonsets[], pod_cidrs[]}"}}
+components:
+  schemas:
+    Field:
+      type: object
+      required: [state]
+      properties:
+        state: {type: string, enum: [present, absent, not_applicable, unknown]}
+        value: {description: only when state is present}
+        reason: {type: string, description: why unknown or not_applicable}
+    Snapshot:
+      type: object
+      required: [node, time, fields]
+      properties:
+        node: {type: string}
+        source: {type: string, enum: [api, agent]}
+        time: {type: string, format: date-time}
+        driver: {type: string}
+        driver_confidence: {type: integer}
+        driver_reason: {type: string}
+        fields:
+          type: object
+          additionalProperties: {$ref: "#/components/schemas/Field"}
+        baseline: {type: boolean}
+    Change:
+      type: object
+      properties:
+        time: {type: string, format: date-time}
+        node: {type: string}
+        source: {type: string}
+        field: {type: string}
+        old: {$ref: "#/components/schemas/Field"}
+        new: {$ref: "#/components/schemas/Field"}
+        severity: {type: string, enum: [alert, info, recovery, degraded]}

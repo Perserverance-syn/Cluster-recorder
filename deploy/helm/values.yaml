@@ -1,0 +1,54 @@
+# Every value has a working default. A bare `helm install` must run.
+# Field-by-field reference: docs/CONFIGURATION.md (CI fails if these drift apart).
+
+image:
+  repository: ghcr.io/perserverance-syn/cluster-recorder
+  tag: ""             # empty = chart appVersion
+  pullPolicy: IfNotPresent
+
+collector:
+  storage:
+    backend: sqlite         # sqlite | postgres (postgres not yet implemented; the collector refuses to start)
+    dsn: /data/recorder.db  # sqlite file path, or Postgres connection string
+    maxSizeMB: 4096         # hard cap; oldest raw snapshots dropped first, then oldest events
+  persistence:
+    size: 5Gi
+    storageClass: ""        # empty = cluster default StorageClass
+  retention:
+    events: 720h            # 30 days; also applies to pod transitions
+    changes: 720h
+    snapshots: 168h         # 7 days; raw snapshots are the bulk. Baselines are never pruned.
+  incident:
+    podThreshold: 3
+    namespaceThreshold: 2
+    windowMinutes: 10
+  baseline:
+    stableMinutes: 15
+  logLevel: info            # debug | info | warn | error
+  resources:
+    requests: {cpu: 50m, memory: 128Mi}
+    limits: {memory: 512Mi}
+  nodeSelector:
+    kubernetes.io/os: linux
+  tolerations: []
+
+# Tier 2 node agent. Opt-in. Needs hostNetwork/hostPID, so it gets its own
+# namespace labelled `privileged`; the collector namespace stays restricted.
+# No Kubernetes API access at all. Not for managed clusters (EKS/AKS/GKE).
+agent:
+  enabled: false
+  namespace: recorder-agent
+  sampleIntervalSeconds: 30
+  cniDriver: auto           # auto | flannel | calico | cilium | generic. Force only when detection is wrong.
+  bufferSize: 100           # samples held in memory while the collector is unreachable; oldest dropped
+  resources:
+    requests: {cpu: 20m, memory: 32Mi}
+    limits: {memory: 128Mi}
+
+# Pod CIDR override for the agent's route sampling. Leave empty: it is
+# discovered from Node.spec.podCIDRs and the controller-manager cluster CIDR.
+podCIDR: ""
+
+rbac:
+  # Optional read access to Calico IPPools for overlay-mode detection (tier 2 only).
+  calicoIPPools: false
